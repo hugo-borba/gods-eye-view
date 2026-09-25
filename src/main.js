@@ -110,6 +110,13 @@ async function init() {
         return el;
       })(),
       msaaSamples: 4,
+      // Render at the display's true pixel density instead of CSS pixels.
+      // Cesium defaults this to true, which on a scaled display (Windows at
+      // 125% => devicePixelRatio 1.25) renders 1536x864 and upscales to the
+      // panel's 1920x1080 — a 25% linear softness on every 3D tile texture.
+      // Costs GPU proportional to the extra pixels; drop back to the default
+      // if the frame rate suffers before touching the tileset LOD.
+      useBrowserRecommendedResolution: false,
       contextOptions: {
         webgl: {
           preserveDrawingBuffer: true,
@@ -125,6 +132,23 @@ async function init() {
     // 2026-08-05 perf investigation as a strict halving of idle burn on
     // 120 Hz hardware; a no-op on 60 Hz displays. (perf item 2)
     viewer.targetFrameRate = 60;
+
+    // Supersample above native resolution: the scene renders at 2x the
+    // panel's real pixel count, then the browser's own downscale on paint
+    // resolves it to screen size — one step past the useBrowserRecommendedResolution
+    // fix above, and the reason this differs from it: that fix stopped an
+    // upscale (rendering BELOW panel resolution and stretching up); this
+    // renders ABOVE it and folds back down, which is what actually
+    // anti-aliases edges the way MSAA alone does not catch. 2.0 is the
+    // conventional supersampling reference point — beyond it, returns drop
+    // fast and instability risk (dropped frames, WebGL context loss on
+    // memory-constrained integrated GPUs) climbs faster than the visible
+    // gain. This is the single most expensive of the three quality levers
+    // in this file (resolution, this, then tileset LOD) — GPU cost scales
+    // with the square of the value, so 2.0 is already 4x the pixel-shading
+    // work of 1.0. Drop this first, before either of the other two, if
+    // frame rate becomes the binding constraint.
+    viewer.resolutionScale = 2.0;
 
     // Register per-layer data attribution into the "Data attribution" popover.
     // Required by each source's license (ODbL, CC BY-NC-SA, NASA FIRMS, etc.);
