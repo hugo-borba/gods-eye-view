@@ -1,0 +1,467 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>Manual de Bordo GEV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  /* ---- Light: carta náutica em papel frio ---- */
+  :root{
+    --ground:#E9EEF1;
+    --surface:#FFFFFF;
+    --surface-2:#DFE7EC;
+    --line:#C2D0D9;
+    --line-soft:#D7E1E7;
+    --ink:#0E161D;
+    --ink-2:#3A4A56;
+    --muted:#63757F;
+    --accent:#A25F08;
+    --accent-wash:#F6E7D2;
+    --cyan:#0F6C77;
+    --free:#2F6B45;
+    --free-wash:#DDEBE2;
+    --key:#8A5B0B;
+    --key-wash:#F4E6CE;
+    --meter:#9C3121;
+    --meter-wash:#F6DED9;
+    --shadow:0 1px 2px rgba(14,22,29,.06),0 8px 24px rgba(14,22,29,.06);
+    --radius:3px;
+  }
+  /* ---- Dark (padrão do sistema): sala de operações ---- */
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#080D12;
+      --surface:#101820;
+      --surface-2:#16212B;
+      --line:#25343F;
+      --line-soft:#1B2731;
+      --ink:#DEE7EE;
+      --ink-2:#A8B9C5;
+      --muted:#7A8D9A;
+      --accent:#F0A63C;
+      --accent-wash:#2A1F0F;
+      --cyan:#57C6D2;
+      --free:#6FBF8E;
+      --free-wash:#13251B;
+      --key:#E2AE55;
+      --key-wash:#2A2110;
+      --meter:#E8735C;
+      --meter-wash:#2C1613;
+      --shadow:0 1px 0 rgba(255,255,255,.03),0 10px 30px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#080D12;
+    --surface:#101820;
+    --surface-2:#16212B;
+    --line:#25343F;
+    --line-soft:#1B2731;
+    --ink:#DEE7EE;
+    --ink-2:#A8B9C5;
+    --muted:#7A8D9A;
+    --accent:#F0A63C;
+    --accent-wash:#2A1F0F;
+    --cyan:#57C6D2;
+    --free:#6FBF8E;
+    --free-wash:#13251B;
+    --key:#E2AE55;
+    --key-wash:#2A2110;
+    --meter:#E8735C;
+    --meter-wash:#2C1613;
+    --shadow:0 1px 0 rgba(255,255,255,.03),0 10px 30px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:48px 28px 96px;display:flex;flex-direction:column;gap:56px}
+
+  .eyebrow{
+    font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin:0;
+  }
+  h1{
+    font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1.05;
+    letter-spacing:-.015em;margin:10px 0 0;text-wrap:balance;
+  }
+  h1 .accent{color:var(--accent)}
+  .lede{color:var(--ink-2);font-size:18px;margin:16px 0 0;max-width:62ch}
+
+  h2{
+    font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:700;font-size:23px;letter-spacing:-.005em;
+    margin:0;display:flex;align-items:baseline;gap:12px;text-wrap:balance;
+  }
+  h2 .num{
+    font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;
+    color:var(--accent);letter-spacing:0;flex:none;
+    font-variant-numeric:tabular-nums;
+  }
+  h3{
+    font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase;
+    margin:0;color:var(--ink);
+  }
+  section{display:flex;flex-direction:column;gap:20px}
+  p{margin:0;max-width:66ch}
+  ul,ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:9px;max-width:66ch}
+  li::marker{color:var(--muted)}
+  a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+  a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  strong{font-weight:600}
+  hr{border:0;border-top:1px solid var(--line-soft);margin:0}
+
+  code{
+    font-family:"IBM Plex Mono",monospace;font-size:.875em;
+    background:var(--surface-2);border:1px solid var(--line-soft);
+    padding:1px 5px;border-radius:var(--radius);color:var(--ink);
+  }
+  pre{
+    margin:0;background:var(--surface);border:1px solid var(--line);
+    border-left:2px solid var(--accent);
+    border-radius:var(--radius);padding:14px 16px;overflow-x:auto;
+    font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;
+    color:var(--ink);box-shadow:var(--shadow);
+  }
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+
+  /* ---- Readout de status ---- */
+  .readout{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .readout-head{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--surface-2);
+    font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  }
+  .live{display:inline-flex;align-items:center;gap:7px;color:var(--free)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--free);flex:none}
+  .readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));margin:0}
+  .cell{padding:14px 18px;border-right:1px solid var(--line-soft);border-top:1px solid var(--line-soft)}
+  .cell dt{
+    font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;
+    font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 3px;
+  }
+  .cell dd{
+    margin:0;font-family:"IBM Plex Mono",monospace;font-size:14.5px;
+    font-variant-numeric:tabular-nums;color:var(--ink);word-break:break-word;
+  }
+
+  /* ---- Tabelas ---- */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+  th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  thead th{
+    font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;
+    font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:0}
+  td.k{font-weight:600;white-space:nowrap}
+
+  .chip{
+    display:inline-block;font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding:2px 7px;border-radius:2px;white-space:nowrap;
+  }
+  .chip.key{background:var(--key-wash);color:var(--key);border:1px solid var(--key)}
+  .chip.meter{background:var(--meter-wash);color:var(--meter);border:1px solid var(--meter)}
+
+  /* ---- Passos ---- */
+  ol.steps{list-style:none;padding:0;counter-reset:s;gap:14px}
+  ol.steps li{counter-increment:s;display:grid;grid-template-columns:26px 1fr;gap:14px;align-items:start}
+  ol.steps li::before{
+    content:counter(s,decimal-leading-zero);
+    font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;
+    color:var(--accent);padding-top:4px;font-variant-numeric:tabular-nums;
+  }
+
+  /* ---- Teclado ---- */
+  .keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px}
+  .keyrow{
+    display:flex;align-items:center;gap:11px;padding:10px 13px;
+    background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+  }
+  kbd{
+    font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:500;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-bottom-width:2px;border-radius:var(--radius);
+    padding:3px 8px;color:var(--ink);white-space:nowrap;flex:none;
+  }
+  .keyrow span{font-size:14px;color:var(--ink-2)}
+
+  /* ---- Voz ---- */
+  .voice{display:flex;flex-direction:column;gap:22px}
+  .vgroup{display:flex;flex-direction:column;gap:10px}
+  ul.vlist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px;max-width:none}
+  ul.vlist li{
+    font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.6;
+    background:var(--surface);border:1px solid var(--line-soft);
+    border-left:2px solid var(--cyan);
+    border-radius:var(--radius);padding:9px 14px;color:var(--ink);
+  }
+
+  /* ---- Nota ---- */
+  .note{
+    background:var(--accent-wash);border:1px solid var(--accent);
+    border-radius:var(--radius);padding:15px 18px;display:flex;flex-direction:column;gap:8px;
+    color:var(--ink);
+  }
+  .note p{max-width:none}
+  .note .label{
+    font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  }
+
+  footer{
+    border-top:1px solid var(--line-soft);padding-top:20px;
+    font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px;
+  }
+  footer p{max-width:72ch}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+  @media (max-width:560px){
+    .wrap{padding:34px 18px 72px;gap:44px}
+    .cell{border-right:0}
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Instalação local · Windows 11 · 11 set 2026</p>
+    <h1>Manual de Bordo<br><span class="accent">God&rsquo;s Eye View</span></h1>
+    <p class="lede">Um simulador de satélite-espião que roda no seu navegador — só que os dados são reais. Este é o estado da sua instalação e como operá-la.</p>
+  </header>
+
+  <div class="readout">
+    <div class="readout-head">
+      <span>Estado do sistema</span>
+      <span class="live"><span class="dot"></span>Servidor no ar</span>
+    </div>
+    <dl class="readout-grid">
+      <div class="cell"><dt>Endereço</dt><dd>localhost:4173</dd></div>
+      <div class="cell"><dt>Repositório</dt><dd>~/projects/gods-eye-view</dd></div>
+      <div class="cell"><dt>Node.js</dt><dd>24.19.0 LTS</dd></div>
+      <div class="cell"><dt>Versão GEV</dt><dd>0.1.1 · a547e99</dd></div>
+      <div class="cell"><dt>Basemap atual</dt><dd>Esri World Imagery</dd></div>
+      <div class="cell"><dt>Chaves ativas</dt><dd>nenhuma (keyless)</dd></div>
+    </dl>
+  </div>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">01</span>Ligar 3D fotorrealista e voz</h2>
+    <p>As chaves entram <strong>dentro do app</strong>, nunca num arquivo editado à mão e nunca por um chat. O painel grava o <code>.env</code> na raiz do repositório com permissão exclusiva do seu usuário, e reinicia o servidor sozinho.</p>
+
+    <ol class="steps">
+      <li>No canto inferior direito da tela, clique no chip <strong>POWER UP</strong>. Ele mostra quantas chaves faltam — <code>POWER UP · 8 KEYS WAITING</code>. Se a janela estiver estreita e o chip sumir, abra <code>localhost:4173/?setup=1</code>.</li>
+      <li>Abre o <strong>Provider Settings</strong>: uma linha por provedor, com o que cada chave liga e onde consegui-la.</li>
+      <li>Cole a chave no campo do provedor desejado. O campo aceita colar por cima para substituir.</li>
+      <li>Clique em <strong>SAVE KEYS</strong>. O app reinicia com a capacidade nova ligada — a aba pode piscar um erro por um instante, que é o servidor subindo de novo. Recarregue.</li>
+      <li>Com tudo configurado, o chip passa a ler <strong>POWERED UP</strong>.</li>
+    </ol>
+
+    <div class="note">
+      <span class="label">Onde as chaves ficam</span>
+      <p>No arquivo <code>.env</code> da raiz do repositório, em texto plano, fora do Git e legível só pelo seu usuário. Chaves que já existam no seu ambiente de shell aparecem como <em>configured externally</em> e o painel não as toca. Para conferir o que está configurado sem expor valor nenhum, rode <code>npm run doctor</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <h3>As duas chaves que importam agora</h3>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Capacidade</th><th>Provedor</th><th>Custo</th><th>Onde pegar</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">3D fotorrealista</td>
+            <td>Cesium ion</td>
+            <td><span class="chip key">grátis</span></td>
+            <td><a href="https://cesium.com/ion">cesium.com/ion</a></td>
+          </tr>
+          <tr>
+            <td class="k">Voz e resumo do HUD</td>
+            <td>OpenAI</td>
+            <td><span class="chip meter">medido</span></td>
+            <td><a href="https://platform.openai.com">platform.openai.com</a></td>
+          </tr>
+          <tr>
+            <td class="k">3D direto + busca de lugares</td>
+            <td>Google Maps</td>
+            <td><span class="chip meter">medido</span></td>
+            <td><a href="https://console.cloud.google.com/">Google Cloud Console</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Cesium ion — o caminho gratuito para o 3D</h3>
+    <p>Crie a conta, vá em <strong>Access Tokens</strong> e gere um token <strong>público</strong> com escopo <code>assets:read</code> — não use o token padrão da conta, que tem escopo amplo demais. Cole no campo <em>Cesium ion</em> do painel.</p>
+    <p>Isso liga as cidades em <strong>Google Photorealistic 3D</strong> servidas pela Cesium, mais terreno mundial e as camadas de imagem hospedadas na ion. O plano Community é gratuito para uso pessoal e não-comercial elegível, com cotas próprias — confira os termos vigentes.</p>
+    <p>Esse token <strong>é embutido no bundle do navegador por design</strong> e fica visível no DevTools. A proteção correta não é escondê-lo: é restringi-lo por URL no painel da Cesium.</p>
+
+    <h3>OpenAI — a voz</h3>
+    <p>Em <strong>API keys</strong>, gere uma chave e cole no campo <em>OpenAI</em>. Diferente da anterior, esta <strong>nunca chega ao navegador</strong>: o servidor local a guarda e entrega ao cliente apenas um token de sessão de vida curta.</p>
+    <p>É a única chave que custa dinheiro de verdade — áudio em tempo real roda alguns centavos por minuto ativo. O app mede isso para você: há um leitor de gasto da sessão ao lado do microfone, um alerta em <strong>US$&nbsp;2</strong> e um corte rígido em <strong>US$&nbsp;5</strong> que encerra a sessão. O botão <strong>MINI</strong> troca para o modelo mais barato; o padrão é sensivelmente mais esperto.</p>
+    <p>Defina também um limite de uso no próprio painel da OpenAI, em <em>Settings → Limits</em>. O corte do app protege a sessão, não a fatura.</p>
+
+    <h3>Google Maps — opcional</h3>
+    <p>Só vale se você quiser a <strong>busca de lugares dentro do app</strong> ou o 3D direto da Google em vez do caminho pela Cesium. Exige faturamento habilitado. As primeiras 1.000 sessões de Photorealistic 3D Tiles por mês são gratuitas hoje, e uma requisição raiz cobre cerca de três horas de renderização — uso solo costuma caber na faixa gratuita. Restrinja a chave por referenciador HTTP e configure alerta de orçamento.</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">02</span>Os primeiros cinco minutos</h2>
+    <p>Na primeira tela escolha uma missão — <strong>Live Contacts</strong>, <strong>Space Missions</strong>, <strong>Environmental</strong> ou <strong>Explore Manually</strong>. Depois, nesta ordem:</p>
+    <ol class="steps">
+      <li><strong>Acenda o céu.</strong> Ligue a camada <strong>Flights</strong>: milhares de aeronaves reais deslizando sobre telemetria ao vivo. Clique numa — a câmera trava nela, um rastro se desenha atrás e o cartão de telemetria sobe.</li>
+      <li><strong>Assuma os controles.</strong> Com a aeronave travada, aperte <strong>COCKPIT</strong> e desça junto, trocando de sensor no meio do voo.</li>
+      <li><strong>Desça num aeroporto movimentado.</strong> Busque um e vá até as pistas de táxi com <strong>3D</strong> ligado — contatos em solo, rastros de taxiamento, o pátio inteiro funcionando.</li>
+      <li><strong>Olhe por uma câmera pública.</strong> Ligue <strong>CCTV</strong> sobre Austin, Londres ou Califórnia. Os feeds não são embeds: eles se projetam <em>dentro</em> da cidade 3D. Troque a cobertura para <strong>VIEWSHED</strong> e cada câmera desenha até onde enxerga — e onde fica cega.</li>
+      <li><strong>Rastreie algo em órbita.</strong> Ligue <strong>Satellites</strong> e clique na ISS: você viaja junto, com anel orbital e tudo.</li>
+      <li><strong>Troque a óptica.</strong> Aperte <kbd>1</kbd> a <kbd>7</kbd> e o planeta inteiro renderiza por outro sensor.</li>
+      <li><strong>Volte para casa.</strong> <strong>Reset Globe</strong> devolve a Terra cheia.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>Controles</h2>
+    <div class="keys">
+      <div class="keyrow"><kbd>1</kbd>&ndash;<kbd>7</kbd><span>Estilos: CRT, NVG, FLIR, Noir, Snow</span></div>
+      <div class="keyrow"><kbd>H</kbd><span>HUD militar</span></div>
+      <div class="keyrow"><kbd>D</kbd><span>Malha de detecção</span></div>
+      <div class="keyrow"><kbd>C</kbd><span>Cockpit</span></div>
+      <div class="keyrow"><kbd>Esc</kbd><span>Sair do modo atual</span></div>
+    </div>
+    <p>No mouse: <strong>clique</strong> em qualquer objeto para travar a câmera nele e abrir os metadados. <strong>Contacts</strong> lista tudo num raio de 250&nbsp;km do seu alvo — dá para pular de aeronave em aeronave e cair direto no cockpit da seguinte. Uma embarcação ou um incêndio rastreado entrega você à câmera pública mais próxima com um clique em <strong>NEAREST</strong>.</p>
+    <p>Câmera, estilo, camadas e até um alvo rastreado cabem na URL: <strong>Share Links</strong> transforma a vista atual num link — um alvo vivo vira passagem de bastão, não marcador.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>Falar com o planeta</h2>
+    <p>Com a chave OpenAI ativa, clique em <strong>GEV MIC</strong>, conceda o microfone e fale. O agente puxa o contexto da cena antes de responder — coordenadas, nomes de rua, camadas ligadas, escala da vista. São 28 ferramentas em quatro funções:</p>
+
+    <div class="voice">
+      <div class="vgroup">
+        <h3>Dirigir a câmera</h3>
+        <ul class="vlist">
+          <li>&ldquo;Take me to Tokyo.&rdquo;</li>
+          <li>&ldquo;Orbit around this area slowly.&rdquo;</li>
+          <li>&ldquo;Zoom out to a globe view.&rdquo;</li>
+        </ul>
+      </div>
+      <div class="vgroup">
+        <h3>Anotar o mundo</h3>
+        <ul class="vlist">
+          <li>&ldquo;Outline the state of Texas.&rdquo;</li>
+          <li>&ldquo;How far is the Eiffel Tower from the Louvre?&rdquo;</li>
+          <li>&ldquo;Clear the map.&rdquo;</li>
+        </ul>
+      </div>
+      <div class="vgroup">
+        <h3>Interrogar as camadas</h3>
+        <ul class="vlist">
+          <li>&ldquo;How many flights are over Texas right now?&rdquo;</li>
+          <li>&ldquo;What is the biggest fire near Los Angeles?&rdquo;</li>
+          <li>&ldquo;When does the ISS pass over next?&rdquo;</li>
+        </ul>
+      </div>
+      <div class="vgroup">
+        <h3>Operar o console</h3>
+        <ul class="vlist">
+          <li>&ldquo;Switch to night vision and turn on the flights layer.&rdquo;</li>
+          <li>&ldquo;Track that plane.&rdquo; &rarr; &ldquo;Enter cockpit.&rdquo;</li>
+          <li>&ldquo;What&rsquo;s turned on right now?&rdquo;</li>
+        </ul>
+      </div>
+    </div>
+    <p>Sem a chave, o app inteiro continua funcionando — o botão do microfone apenas informa que a voz está indisponível.</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">05</span>Ligar e desligar</h2>
+    <p>O servidor está rodando agora. Para as próximas vezes, o caminho mais simples é lançar de um <strong>cmd.exe</strong> ou do <strong>Windows PowerShell 5.1</strong>:</p>
+<pre><code>cd %USERPROFILE%\projects\gods-eye-view
+npm run dev</code></pre>
+    <p>Se preferir lançar do <strong>PowerShell&nbsp;7</strong> (<code>pwsh</code>), acrescente uma linha antes — veja o porquê abaixo:</p>
+<pre><code>cd ~/projects/gods-eye-view
+$env:PSModulePath = "C:\WINDOWS\System32\WindowsPowerShell\v1.0\Modules"
+npm run dev</code></pre>
+    <p>Depois abra <code>localhost:4173</code>. Para encerrar, <kbd>Ctrl</kbd>+<kbd>C</kbd> no terminal onde ele roda. Para checar o ambiente e quais provedores estão configurados — sem imprimir nenhum valor — rode <code>npm run doctor</code>. Para atualizar o projeto, <code>git pull</code> seguido de <code>npm ci</code>.</p>
+
+    <div class="note">
+      <span class="label">Por que o shell de lançamento importa</span>
+      <p>Ao salvar uma chave, o app trava o <code>.env</code> com <code>icacls</code> e depois <em>reverifica</em> o resultado chamando <code>Get-Acl</code> no Windows PowerShell&nbsp;5.1. O <code>pwsh</code>&nbsp;7 injeta os próprios diretórios de módulo no <code>PSModulePath</code> em tempo de execução, e todo processo que ele lança herda isso — então o 5.1 tenta carregar o <code>Microsoft.PowerShell.Security</code> do&nbsp;7, o catálogo de tipos colide, <code>Get-Acl</code> desaparece e o app aborta o salvamento. Ele age certo: não conseguiu <em>provar</em> que o arquivo está protegido, então não escreve o segredo.</p>
+      <p>Não há nada quebrado para consertar — o <code>PSModulePath</code> do registro está limpo em ambos os escopos, e de um <code>cmd.exe</code> a variável nem existe. É só uma questão de qual shell inicia o servidor. Sintoma, quando acontece: <em>&ldquo;could not restrict the credential file to your account; nothing was saved&rdquo;</em>.</p>
+    </div>
+
+    <div class="note">
+      <span class="label">Fica só na sua máquina</span>
+      <p>O servidor escuta apenas em <code>localhost</code>: ninguém na sua rede alcança. Se um dia você expuser com <code>--host 0.0.0.0</code>, saiba que qualquer um que alcançar o servidor passa a usar <strong>as suas chaves</strong> — nesse caso o painel de chaves é desativado automaticamente, mas configure cotas e alertas de faturamento no provedor antes de qualquer coisa.</p>
+    </div>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">06</span>Definição do 3D</h2>
+    <p>Esta instalação tem duas mudanças locais que aumentam a nitidez do globo 3D além do padrão do projeto. Elas vivem em dois arquivos <strong>modificados e não commitados</strong>:</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Onde</th><th>Ajuste</th><th>O que muda</th><th>Custo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k"><code>src/main.js</code></td>
+            <td><code>useBrowserRecommendedResolution: false</code></td>
+            <td>Renderiza em 1920&times;1080 reais em vez de 1536&times;864 esticados</td>
+            <td>+56% de pixels na GPU</td>
+          </tr>
+          <tr>
+            <td class="k"><code>src/mapStartup.js</code></td>
+            <td><code>maximumScreenSpaceError: 8</code></td>
+            <td>Busca tiles mais finos — geometria e textura melhores de perto</td>
+            <td>~4&times; mais tiles: cota e memória</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>O padrão do Cesium é conservador de propósito: o custo da resolução cresce com o <em>quadrado</em> da densidade de tela (numa tela dPR&nbsp;3 seriam 9&times; os pixels), e um limiar de erro agressivo gastaria cota de provedor 4&times; mais rápido para todo mundo — o que contraria a proposta do projeto de caber na faixa gratuita.</p>
+
+    <p><strong>Se o desempenho cair</strong>, suba o <code>maximumScreenSpaceError</code> primeiro (para 12, depois 16) — é ele que multiplica por quatro. A resolução é o ajuste mais barato dos dois. <strong>Se o 3D parar de carregar</strong>, suspeite da cota da ion antes de qualquer outra coisa.</p>
+
+    <div class="note">
+      <span class="label">Atualizar o projeto com essas mudanças</span>
+      <p>Como os dois arquivos são rastreados pelo Git, um <code>git pull</code> direto conflita. Use <code>git stash &amp;&amp; git pull &amp;&amp; git stash pop</code>. Para descartar os ajustes de vez e voltar ao original: <code>git restore src/main.js src/mapStartup.js</code>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>God&rsquo;s Eye View 0.1.1 — Bilawal Sidhu e Sameh Khamis (Halfpixel), licença MIT.</p>
+    <p>Visualização exploratória de dados públicos e de terceiros. Os dados podem estar atrasados, incompletos, modelados, inferidos ou errados. Não use para navegação aérea ou marítima, resposta a emergências, decisões médicas ou financeiras.</p>
+  </footer>
+
+</div>
+
+</body></html>
